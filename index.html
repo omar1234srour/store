@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سرور | SROUR</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            direction: rtl;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        .logo {
+            width: 100px;
+            border-radius: 25%;
+            margin-top: 20px;
+        }
+        .button {
+            display: inline-block;
+            background-color: #0f9d58;
+            color: white;
+            padding: 10px 20px;
+            margin: 20px 0;
+            text-decoration: none;
+            border-radius: 25px;
+            width: 200px;
+            transition: background-color 0.3s ease;
+            text-align: center;
+            font-size: 16px;
+        }
+        .button.loading {
+            background-color: #0f9d58;
+            cursor: not-allowed;
+        }
+        .button.loading::after {
+            content: ' تحميل...';
+            display: inline-block;
+            width: 100%;
+            text-align: center;
+        }
+        .images {
+            display: flex;
+            justify-content: space-between;
+            padding: 0;
+            margin: 0;
+            overflow-x: auto;
+            gap: 20px;
+        }
+        .images img {
+            width: 150px;
+            border-radius: 20px;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .text-start {
+            text-align: start;
+            font-weight: normal;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.95);
+            justify-content: center;
+            align-items: center;
+            touch-action: none;
+        }
+        .modal-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            border-radius: 20px;
+        }
+        .close {
+            position: absolute;
+            top: 10px;
+            right: 25px;
+            color: white;
+            font-size: 35px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .footer-space {
+            height: 45px;
+        }
+        .footer-text {
+            background-color: #f0f0f0;
+            padding: 10px;
+            font-size: 16px;
+            color: #333;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        /* CSS to hide content on non-mobile devices */
+        @media only screen and (min-width: 768px) {
+            body {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <img src="https://i.postimg.cc/j53SCf5V/appstore.jpg" alt="SROUR Logo" class="logo">
+    <h1>سرور | SROUR</h1>
+    <p>Programmer Omar Ahmed Obaid</p>
+
+    <a href="#" id="installButton" class="button">تثبيت</a>
+
+    <h3 class="text-start">صور داخل التطبيق ></h3>
+
+    <div class="images">
+        <img src="https://i.postimg.cc/TYt3yB7V/Picsart-24-08-17-21-33-08-594.jpg" alt="App Screenshot 1" onclick="openModal(this.src, 0)">
+        <img src="https://i.postimg.cc/wvDB7vZM/Picsart-24-08-17-21-34-19-131.jpg" alt="App Screenshot 2" onclick="openModal(this.src, 1)">
+        <img src="https://i.postimg.cc/vHYmZGz8/Picsart-24-08-17-21-34-05-654.jpg" alt="App Screenshot 3" onclick="openModal(this.src, 2)">
+        <img src="https://i.postimg.cc/PJ4rQ7tk/Picsart-24-08-17-21-33-38-119.jpg" alt="App Screenshot 4" onclick="openModal(this.src, 3)">
+        <img src="https://i.postimg.cc/FFgRvY0n/Picsart-24-08-17-21-33-50-082.jpg" alt="App Screenshot 5" onclick="openModal(this.src, 4)">
+    </div>
+
+    <div id="myModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
+    </div>
+
+    <!-- Footer Space -->
+    <div class="footer-space"></div>
+    <div class="footer-text">
+        شركة حلاوة سرور الشامية الاصلية ® 
+    </div>
+
+    <script>
+        var images = document.querySelectorAll('.images img');
+        var currentIndex = 0;
+
+        function openModal(src, index) {
+            var modal = document.getElementById("myModal");
+            var modalImage = document.getElementById("modalImage");
+            modal.style.display = "flex";
+            modalImage.src = src;
+            currentIndex = index;
+            modal.addEventListener('touchstart', handleTouchStart, false);
+            modal.addEventListener('touchend', handleTouchEnd, false);
+        }
+
+        function closeModal() {
+            var modal = document.getElementById("myModal");
+            modal.style.display = "none";
+            modal.removeEventListener('touchstart', handleTouchStart, false);
+            modal.removeEventListener('touchend', handleTouchEnd, false);
+        }
+
+        function handleTouchStart(e) {
+            this.touchStartX = e.touches[0].clientX;
+        }
+
+        function handleTouchEnd(e) {
+            this.touchEndX = e.changedTouches[0].clientX;
+            var threshold = 50;
+
+            if (this.touchEndX < this.touchStartX - threshold) {
+                showNextImage();
+            } else if (this.touchEndX > this.touchStartX + threshold) {
+                showPreviousImage();
+            }
+        }
+
+        function showNextImage() {
+            if (currentIndex < images.length - 1) {
+                currentIndex++;
+                var nextImage = images[currentIndex];
+                var modalImage = document.getElementById("modalImage");
+                modalImage.src = nextImage.src;
+            }
+        }
+
+        function showPreviousImage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                var previousImage = images[currentIndex];
+                var modalImage = document.getElementById("modalImage");
+                modalImage.src = previousImage.src;
+            }
+        }
+
+        document.getElementById('installButton').addEventListener('click', function() {
+            var button = this;
+            button.classList.add('loading');
+            button.textContent = ''; // إخفاء النص الأصلي
+
+            // محاكاة عملية تحميل
+            setTimeout(() => {
+                button.classList.remove('loading');
+                button.textContent = 'تم بدأ التحميل'; // تغيير النص بعد انتهاء التحميل
+
+                // تحميل الملف بعد تغيير النص
+                var fileUrl = 'https://ucarecdn.com/8ac33f4f-0f67-45f5-9fab-0d5798c08611/SROUR.apk';
+                var link = document.createElement('a');
+                link.href = fileUrl;
+                link.download = 'SROUR.apk';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+
+            }, 2000); // 2000 ميلي ثانية = 2 ثانية
+        });
+    </script>
+
+</body>
+</html>
